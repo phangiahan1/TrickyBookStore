@@ -7,9 +7,9 @@ namespace TrickyBookStore.Services.Books
 {
     internal class BookService : IBookService
     {
+        IList<Book> allBooks = (IList<Book>)Store.Books.Data;
         public Book GetBook(long id)
         {
-            IList<Book> allBooks = (IList<Book>)Store.Books.Data;
             Book book = new Book(); 
             try
             {
@@ -25,7 +25,6 @@ namespace TrickyBookStore.Services.Books
 
         public IList<Book> GetBooks(params long[] ids)
         {
-            IList<Book> allBooks = (IList<Book>)Store.Books.Data;
             IList<Book> targetBooks = new List<Book>();
             Book book = new Book();
             foreach (long id in ids)

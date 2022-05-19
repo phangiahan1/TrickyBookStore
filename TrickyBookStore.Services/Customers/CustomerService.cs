@@ -9,6 +9,7 @@ namespace TrickyBookStore.Services.Customers
     internal class CustomerService : ICustomerService
     {
         ISubscriptionService SubscriptionService { get; }
+        IList<Customer> allCustomers = (IList<Customer>)Store.Customers.Data;
 
         public CustomerService(ISubscriptionService subscriptionService)
         {
@@ -17,7 +18,6 @@ namespace TrickyBookStore.Services.Customers
 
         public Customer GetCustomerById(long id)
         {
-            IList<Customer> allCustomers = (IList<Customer>)Store.Customers.Data; ;
             Customer customer = new Customer();
             try
             {
