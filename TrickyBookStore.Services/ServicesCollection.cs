@@ -30,11 +30,6 @@ namespace TrickyBookStore.Services
             return bookService.GetBooks(ids);
         }
 
-        public Book GetBook(long id)
-        {
-           return bookService.GetBook(id);
-        }
-
         public IList<PurchaseTransaction> getPurchaseTransactions(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {
             return purchaseTransactionService.GetPurchaseTransactions(customerId, fromDate, toDate);

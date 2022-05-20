@@ -37,5 +37,31 @@ namespace TrickyBookStore.Services.Books
             }
             return targetBooks;
         }
+
+        public IList<Book> GetNewBooks(IList<Book> books)
+        {
+            IList < Book > newBooks = new List<Book>();
+            foreach (Book book in books)
+            {
+                if (!book.IsOld)
+                {
+                    newBooks.Add(book);
+                }
+            }
+            return newBooks;
+        }
+
+        public IList<Book> GetOldBooks(IList<Book> books)
+        {
+            IList<Book> oldBooks = new List<Book>();
+            foreach (Book book in books)
+            {
+                if (book.IsOld)
+                {
+                    oldBooks.Add(book);
+                }
+            }
+            return oldBooks;
+        }
     }
 }
