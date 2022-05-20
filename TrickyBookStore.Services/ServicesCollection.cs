@@ -16,7 +16,15 @@ namespace TrickyBookStore.Services
     public class ServicesCollection
     {
         IBookService bookService = new BookService();
-        
+        ISubscriptionService subscriptionService = new SubscriptionService();
+        ICustomerService customerService = new CustomerService(new SubscriptionService());
+        IPurchaseTransactionService purchaseTransactionService = new PurchaseTransactionService(new BookService());
+        IPaymentService paymentService = new PaymentService(new CustomerService(new SubscriptionService()), new PurchaseTransactionService(new BookService()));
+
+        public Customer GetCustomerById(long id)
+        {
+            return customerService.GetCustomerById(id); 
+        }
         public IList<Book> GetBooks(params long[] ids)
         {
             return bookService.GetBooks(ids);
@@ -25,6 +33,19 @@ namespace TrickyBookStore.Services
         public Book GetBook(long id)
         {
            return bookService.GetBook(id);
+        }
+
+        public IList<PurchaseTransaction> getPurchaseTransactions(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
+        {
+            return purchaseTransactionService.GetPurchaseTransactions(customerId, fromDate, toDate);
+        }
+        public double getPayment(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
+        {
+            return paymentService.GetPaymentAmount(customerId, fromDate, toDate);
+        }
+        public IList<Subscription> GetSubscriptions(params int[] ids)
+        {
+            return subscriptionService.GetSubscriptions(ids);
         }
     }
 }

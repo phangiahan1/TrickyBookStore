@@ -13,10 +13,12 @@ namespace TrickyBookStore.Main
         static void Main(string[] args)
         {
             ServicesCollection services = new ServicesCollection();
-            foreach (Book book in services.GetBooks(new long[] { 1, 2, 900 }))
-            {
-                Console.WriteLine(book.Price);
-            }
+
+            //foreach (Subscription book in services.GetSubscriptions(new int[2] {1, 2}))
+            //{
+            //    Console.WriteLine(book.Id);
+            //}
+            double b = services.getPayment(6, new DateTimeOffset(new DateTime(2017, 1, 2)), new DateTimeOffset(new DateTime(2019, 1, 21)));
         }
     }
 }

@@ -9,7 +9,7 @@ namespace TrickyBookStore.Services.Subscriptions
     {
         IList<Subscription> allSubscriptions = (IList<Subscription>)Store.Subscriptions.Data;
 
-        public Subscription GetSubscription(int id)
+        private Subscription GetSubscription(int id)
         {
             Subscription subscription = new Subscription();
             try
@@ -28,6 +28,7 @@ namespace TrickyBookStore.Services.Subscriptions
         {
             IList<Subscription> targetSubscriptions = new List<Subscription>();
             Subscription subscription = new Subscription();
+
             foreach (int id in ids)
             {
                 subscription = GetSubscription(id);

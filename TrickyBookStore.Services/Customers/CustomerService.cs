@@ -21,13 +21,29 @@ namespace TrickyBookStore.Services.Customers
             Customer customer = new Customer();
             try
             {
-                customer = allCustomers.FirstOrDefault(customerItem => customer.Id == id);
+                customer = allCustomers.FirstOrDefault(customerItem => customerItem.Id == id);
                 return customer;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+            return null;
+        }
+
+        public IList<Subscription> GetSubscriptions(Customer customer)
+        {
+            try
+            {
+                int[] subscriptionIds = customer.SubscriptionIds.ToList().ToArray();
+                IList<Subscription> subscriptions = SubscriptionService.GetSubscriptions(subscriptionIds);
+
+                foreach (Subscription subscription in subscriptions)
+                {
+                    return subscriptions;
+                }
+            }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             return null;
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TrickyBookStore.Models;
 using TrickyBookStore.Services.Books;
+using TrickyBookStore.Services.Customers;
 
 namespace TrickyBookStore.Services.PurchaseTransactions
 {
@@ -17,7 +18,27 @@ namespace TrickyBookStore.Services.PurchaseTransactions
 
         public IList<PurchaseTransaction> GetPurchaseTransactions(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {
-            throw new NotImplementedException();
+            IList<PurchaseTransaction> purchaseTransactions = new List<PurchaseTransaction>();
+            foreach (var transaction in allPurchaseTransactions)
+            {
+                if(transaction.CustomerId == customerId && transaction.CreatedDate>=fromDate && transaction.CreatedDate <= toDate)
+                {
+                    purchaseTransactions.Add(transaction);
+                    
+                }
+            }
+            return purchaseTransactions;
+        }
+
+        public IList<Book> GetCustomerBooks(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
+        {
+            IList<Book> books = new List<Book>();
+            IList<PurchaseTransaction> purchaseTransactions = GetPurchaseTransactions(customerId, fromDate, toDate);    
+            foreach (var transaction in purchaseTransactions)
+            {
+                books.Add(BookService.GetBook(transaction.BookId));
+            }
+            return books;
         }
     }
 }
