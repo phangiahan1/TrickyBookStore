@@ -22,6 +22,10 @@ namespace TrickyBookStore.Services.Customers
             try
             {
                 customer = allCustomers.FirstOrDefault(customerItem => customerItem.Id == id);
+                if (customer.SubscriptionIds == null)
+                {
+                    customer.SubscriptionIds.Add((int)SubscriptionTypes.Free);
+                }
                 return customer;
             }
             catch (Exception ex)
@@ -44,7 +48,7 @@ namespace TrickyBookStore.Services.Customers
                 }
             }
             catch (Exception ex) { Console.WriteLine(ex.Message); }
-            return null;
+            return SubscriptionService.GetSubscriptions(2);
         }
     }
 }

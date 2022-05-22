@@ -40,5 +40,15 @@ namespace TrickyBookStore.Services.PurchaseTransactions
             }
             return books;
         }
+
+        public IList<Book> GetCustomerOldBooks(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
+        {
+            return BookService.GetOldBooks(GetCustomerBooks(customerId, fromDate, toDate));
+        }
+
+        public IList<Book> GetCustomerNewBooks(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
+        {
+            return BookService.GetOldBooks(GetCustomerBooks(customerId, fromDate, toDate));
+        }
     }
 }

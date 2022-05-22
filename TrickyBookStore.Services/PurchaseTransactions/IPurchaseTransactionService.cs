@@ -9,5 +9,7 @@ namespace TrickyBookStore.Services.PurchaseTransactions
     {
         IList<PurchaseTransaction> GetPurchaseTransactions(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate);
         IList<Book> GetCustomerBooks(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate);
+        IList<Book> GetCustomerOldBooks(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate);
+        IList<Book> GetCustomerNewBooks(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate);
     }
 }

@@ -19,7 +19,7 @@ namespace TrickyBookStore.Services
         ISubscriptionService subscriptionService = new SubscriptionService();
         ICustomerService customerService = new CustomerService(new SubscriptionService());
         IPurchaseTransactionService purchaseTransactionService = new PurchaseTransactionService(new BookService());
-        IPaymentService paymentService = new PaymentService(new CustomerService(new SubscriptionService()), new PurchaseTransactionService(new BookService()));
+        IPaymentService paymentService = new PaymentService(new CustomerService(new SubscriptionService()), new PurchaseTransactionService(new BookService()), new SubscriptionService());
 
         public Customer GetCustomerById(long id)
         {

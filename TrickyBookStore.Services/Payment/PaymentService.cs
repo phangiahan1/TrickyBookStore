@@ -13,34 +13,136 @@ namespace TrickyBookStore.Services.Payment
     {
         ICustomerService CustomerService { get; }
         IPurchaseTransactionService PurchaseTransactionService { get; }
+        ISubscriptionService SubscriptionService { get;  }
 
         public PaymentService(ICustomerService customerService, 
-            IPurchaseTransactionService purchaseTransactionService)
+            IPurchaseTransactionService purchaseTransactionService,
+            ISubscriptionService subscriptionService)
         {
             CustomerService = customerService;
             PurchaseTransactionService = purchaseTransactionService;
+            SubscriptionService = subscriptionService;
+        }
+
+        internal double GetDiscountOldBook(IList<Book> listOldBooks, IList<Subscription> customerSubscriptions)
+        {
+            double discountPrice = 0;
+            bool isCalculated = false;
+
+            var isPremium = customerSubscriptions.FirstOrDefault(s => s.SubscriptionType == SubscriptionTypes.Premium);
+
+            if(isPremium != null)
+            {
+                return 0;
+            }
+
+            foreach (Book book in listOldBooks)
+            {
+                isCalculated = false;
+                foreach (Subscription subscription in customerSubscriptions)
+                {
+                    if (book.CategoryId == subscription.BookCategoryId)
+                    {
+                        discountPrice += 0;
+                        isCalculated = true;
+                    }
+                    if (subscription.BookCategoryId == null)
+                    {
+                        discountPrice += book.Price * subscription.PriceDetails["DiscountOldBook"];
+                        isCalculated = true;
+                    }
+                    if (isCalculated)
+                    {
+                        break;
+                    }
+                }
+                if (!isCalculated)
+                {
+                    discountPrice += book.Price * 0.1;
+                }
+            }
+            return discountPrice;
+        }
+
+        internal double GetDiscountNewBook(IList<Book> listNewBooks, IList<Subscription> customerSubscriptions)
+        {
+            double discountPrice = 0;
+            bool isCalculated = false;
+            foreach (Book book in listNewBooks)
+            {
+                isCalculated = false;
+                foreach (Subscription subscription in customerSubscriptions)
+                {
+                    if (book.CategoryId == subscription.BookCategoryId)
+                    {
+                        if(subscription.PriceDetails["LimitBookWithDiscount"] > 0)
+                        {
+                            discountPrice += book.Price * subscription.PriceDetails["DiscountNewBook"];
+                            subscription.PriceDetails["LimitBookWithDiscount"]--;
+                            isCalculated = true;
+                        }
+                    }
+                    if (subscription.BookCategoryId == null)
+                    {
+                        if (subscription.PriceDetails["LimitBookWithDiscount"] > 0)
+                        {
+                            discountPrice += book.Price * subscription.PriceDetails["DiscountNewBook"];
+                            subscription.PriceDetails["LimitBookWithDiscount"]--;
+                            isCalculated = true;
+                        }
+                    }
+                    if (isCalculated)
+                    {
+                        break;
+                    }
+                }
+                if (!isCalculated)
+                {
+                    discountPrice += book.Price;
+                }
+            }
+            return discountPrice;
         }
 
         public double GetPaymentAmount(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
-        {
-            Customer customer =  CustomerService.GetCustomerById(customerId);
+        {   
             IList<Book> customerBooks = PurchaseTransactionService.GetCustomerBooks(customerId, fromDate, toDate);
-            IList<Subscription> customerSubscriptions = CustomerService.GetSubscriptions(customer);
 
             double TotalBeforeDiscount = GetTotalBeforeDiscount(customerBooks);
-            double TotalDiscount = GetTotalDiscount(customerSubscriptions, customerBooks);
-            double Total = TotalBeforeDiscount - TotalDiscount;
+            double TotalDiscount = GetTotalDiscount(customerId, fromDate, toDate);
+            double TotalAfterDiscount = TotalBeforeDiscount - TotalDiscount;
+            double TotalSubscriptions = GetTotalSubscriptions(customerId, fromDate, toDate);
 
-            Console.WriteLine("Price before discount: " + TotalBeforeDiscount);
-            Console.WriteLine("Price discount: " + TotalDiscount);
-            Console.WriteLine("Final price: " + Total);
+            Console.WriteLine("Price books before discount: " + TotalBeforeDiscount);
+            Console.WriteLine("Price books discount: " + TotalDiscount);
+            Console.WriteLine("Price books after discount: " + TotalAfterDiscount);
+            Console.WriteLine("Price subscriptions: " + TotalSubscriptions);
 
-            return Total;
+            return TotalAfterDiscount + TotalSubscriptions;
         }
 
-        public double GetTotalDiscount(IList<Subscription> customerSubscriptions, IList<Book> customerBooks)
+        public double GetTotalDiscount(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {
-            return 0;
+            Customer customer = CustomerService.GetCustomerById(customerId);
+            IList<Subscription> customerSubscriptions = CustomerService.GetSubscriptions(customer);
+            IList<Book> customerOldBooks = PurchaseTransactionService.GetCustomerOldBooks(customerId, fromDate, toDate);
+            IList<Book> customerNewBooks = PurchaseTransactionService.GetCustomerNewBooks(customerId, fromDate, toDate);
+
+            double totalDiscountOldBook = GetDiscountOldBook(customerOldBooks, customerSubscriptions);
+            double totalDiscountNewBook = GetDiscountNewBook(customerNewBooks, customerSubscriptions);
+            return totalDiscountOldBook + totalDiscountNewBook;
+        }
+
+        internal double GetTotalSubscriptions(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
+        {
+            Customer customer = CustomerService.GetCustomerById(customerId);
+            IList<Subscription> customerSubscriptions = CustomerService.GetSubscriptions(customer);
+            double total = 0;
+            foreach (Subscription subscription in customerSubscriptions)
+            {
+                total += subscription.PriceDetails["SubscriptionCost"];
+            }
+            return total;
         }
 
         public double GetTotalBeforeDiscount(IList<Book> customerBooks)

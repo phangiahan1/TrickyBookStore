@@ -35,7 +35,7 @@ namespace TrickyBookStore.Services.Books
                     targetBooks.Add(book);
                 }
             }
-            return targetBooks;
+            return targetBooks.OrderByDescending(b => b.Price).ToList();
         }
 
         public IList<Book> GetNewBooks(IList<Book> books)
@@ -48,7 +48,7 @@ namespace TrickyBookStore.Services.Books
                     newBooks.Add(book);
                 }
             }
-            return newBooks;
+            return newBooks.OrderByDescending(b => b.Price).ToList();
         }
 
         public IList<Book> GetOldBooks(IList<Book> books)
@@ -61,7 +61,7 @@ namespace TrickyBookStore.Services.Books
                     oldBooks.Add(book);
                 }
             }
-            return oldBooks;
+            return oldBooks.OrderByDescending(b => b.Price).ToList();
         }
     }
 }

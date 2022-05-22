@@ -9,7 +9,7 @@ namespace TrickyBookStore.Services.Subscriptions
     {
         IList<Subscription> allSubscriptions = (IList<Subscription>)Store.Subscriptions.Data;
 
-        private Subscription GetSubscription(int id)
+        public Subscription GetSubscription(int id)
         {
             Subscription subscription = new Subscription();
             try
@@ -37,7 +37,7 @@ namespace TrickyBookStore.Services.Subscriptions
                     targetSubscriptions.Add(subscription);
                 }
             }
-            return targetSubscriptions;
+            return targetSubscriptions.OrderByDescending(c => c.Priority).ToList();
         }
     }
 }
