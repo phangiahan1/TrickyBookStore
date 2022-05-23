@@ -71,7 +71,6 @@ namespace TrickyBookStore.Services.Payment
                        
             foreach (Book book in listNewBooks)
             {
-                Console.WriteLine("BookCat:" + book.CategoryId);
                 isCalculated = false;
                 foreach (var subscription in customerSubscriptions)
                 {
@@ -79,7 +78,6 @@ namespace TrickyBookStore.Services.Payment
                     {
                         if (subscription.PriceDetails["LimitBookWithDiscount"] > 0)
                         {
-                            Console.WriteLine(subscription.SubscriptionType.ToString() + subscription.BookCategoryId+" - " + subscription.PriceDetails["LimitBookWithDiscount"]);
                             discountPrice += book.Price * subscription.PriceDetails["DiscountNewBook"];
                             subscription.PriceDetails["LimitBookWithDiscount"]--;
                             isCalculated = true;
@@ -90,11 +88,9 @@ namespace TrickyBookStore.Services.Payment
                     {
                         if (subscription.PriceDetails["LimitBookWithDiscount"] > 0)
                         {
-                            Console.WriteLine(subscription.SubscriptionType.ToString() + subscription.BookCategoryId + " - " + subscription.PriceDetails["LimitBookWithDiscount"]);
                             discountPrice += book.Price * subscription.PriceDetails["DiscountNewBook"];
                             subscription.PriceDetails["LimitBookWithDiscount"]--;
                             isCalculated = true;
-                            Console.WriteLine(subscription.PriceDetails["LimitBookWithDiscount"]);
 
                         }
                     }
@@ -116,10 +112,10 @@ namespace TrickyBookStore.Services.Payment
         {   
             IList<Book> customerBooks = PurchaseTransactionService.GetCustomerBooks(customerId, fromDate, toDate);
             Console.WriteLine("- List books: ");
-            //foreach (Book book in customerBooks)
-            //{
-            //    Console.WriteLine("  + Id:" + book.Id + ",Cate " + book.CategoryId + ",isOld " + book.IsOld + ",Price " + book.Price);
-            //}
+            foreach (Book book in customerBooks)
+            {
+                Console.WriteLine("  + Id:" + book.Id + ",Cate " + book.CategoryId + ",isOld " + book.IsOld + ",Price " + book.Price);
+            }
 
             double TotalBeforeDiscount = GetTotalBeforeDiscount(customerBooks);
             double TotalDiscount = GetTotalDiscount(customerId, fromDate, toDate);
