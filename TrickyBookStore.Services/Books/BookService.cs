@@ -63,5 +63,10 @@ namespace TrickyBookStore.Services.Books
             }
             return oldBooks.OrderByDescending(b => b.Price).ToList();
         }
+
+        internal string toString(Book book)
+        {
+            return "  + Id:"+ book.Id + ",Cate " + book.CategoryId + ",isOld " + book.IsOld + ",Price " + book.Price;
+        }
     }
 }

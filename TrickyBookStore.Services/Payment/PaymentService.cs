@@ -31,7 +31,7 @@ namespace TrickyBookStore.Services.Payment
 
             var isPremium = customerSubscriptions.FirstOrDefault(s => s.SubscriptionType == SubscriptionTypes.Premium);
 
-            if(isPremium != null)
+            if (isPremium != null)
             {
                 return 0;
             }
@@ -39,11 +39,11 @@ namespace TrickyBookStore.Services.Payment
             foreach (Book book in listOldBooks)
             {
                 isCalculated = false;
-                foreach (Subscription subscription in customerSubscriptions)
+                foreach (var subscription in customerSubscriptions)
                 {
                     if (book.CategoryId == subscription.BookCategoryId)
                     {
-                        discountPrice += 0;
+                        discountPrice += book.Price;
                         isCalculated = true;
                     }
                     if (subscription.BookCategoryId == null)
@@ -68,29 +68,37 @@ namespace TrickyBookStore.Services.Payment
         {
             double discountPrice = 0;
             bool isCalculated = false;
+                       
             foreach (Book book in listNewBooks)
             {
+                Console.WriteLine("BookCat:" + book.CategoryId);
                 isCalculated = false;
-                foreach (Subscription subscription in customerSubscriptions)
+                foreach (var subscription in customerSubscriptions)
                 {
                     if (book.CategoryId == subscription.BookCategoryId)
                     {
-                        if(subscription.PriceDetails["LimitBookWithDiscount"] > 0)
+                        if (subscription.PriceDetails["LimitBookWithDiscount"] > 0)
                         {
+                            Console.WriteLine(subscription.SubscriptionType.ToString() + subscription.BookCategoryId+" - " + subscription.PriceDetails["LimitBookWithDiscount"]);
                             discountPrice += book.Price * subscription.PriceDetails["DiscountNewBook"];
                             subscription.PriceDetails["LimitBookWithDiscount"]--;
                             isCalculated = true;
                         }
                     }
+
                     if (subscription.BookCategoryId == null)
                     {
                         if (subscription.PriceDetails["LimitBookWithDiscount"] > 0)
                         {
+                            Console.WriteLine(subscription.SubscriptionType.ToString() + subscription.BookCategoryId + " - " + subscription.PriceDetails["LimitBookWithDiscount"]);
                             discountPrice += book.Price * subscription.PriceDetails["DiscountNewBook"];
                             subscription.PriceDetails["LimitBookWithDiscount"]--;
                             isCalculated = true;
+                            Console.WriteLine(subscription.PriceDetails["LimitBookWithDiscount"]);
+
                         }
                     }
+
                     if (isCalculated)
                     {
                         break;
@@ -98,7 +106,7 @@ namespace TrickyBookStore.Services.Payment
                 }
                 if (!isCalculated)
                 {
-                    discountPrice += book.Price;
+                    discountPrice += 0;
                 }
             }
             return discountPrice;
@@ -107,6 +115,11 @@ namespace TrickyBookStore.Services.Payment
         public double GetPaymentAmount(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {   
             IList<Book> customerBooks = PurchaseTransactionService.GetCustomerBooks(customerId, fromDate, toDate);
+            Console.WriteLine("- List books: ");
+            //foreach (Book book in customerBooks)
+            //{
+            //    Console.WriteLine("  + Id:" + book.Id + ",Cate " + book.CategoryId + ",isOld " + book.IsOld + ",Price " + book.Price);
+            //}
 
             double TotalBeforeDiscount = GetTotalBeforeDiscount(customerBooks);
             double TotalDiscount = GetTotalDiscount(customerId, fromDate, toDate);
@@ -130,6 +143,10 @@ namespace TrickyBookStore.Services.Payment
 
             double totalDiscountOldBook = GetDiscountOldBook(customerOldBooks, customerSubscriptions);
             double totalDiscountNewBook = GetDiscountNewBook(customerNewBooks, customerSubscriptions);
+            
+            Console.WriteLine("Discount old books: " + totalDiscountOldBook);
+            Console.WriteLine("Discount new books: " + totalDiscountNewBook);
+
             return totalDiscountOldBook + totalDiscountNewBook;
         }
 
@@ -138,8 +155,10 @@ namespace TrickyBookStore.Services.Payment
             Customer customer = CustomerService.GetCustomerById(customerId);
             IList<Subscription> customerSubscriptions = CustomerService.GetSubscriptions(customer);
             double total = 0;
+            Console.WriteLine("- Subscriptions user");
             foreach (Subscription subscription in customerSubscriptions)
             {
+                Console.WriteLine("  + " + subscription.SubscriptionType.ToString() + " "+subscription.BookCategoryId);
                 total += subscription.PriceDetails["SubscriptionCost"];
             }
             return total;
