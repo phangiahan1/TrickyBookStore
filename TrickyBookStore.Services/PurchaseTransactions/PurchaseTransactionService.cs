@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TrickyBookStore.Models;
 using TrickyBookStore.Services.Books;
 using TrickyBookStore.Services.Customers;
@@ -24,7 +25,6 @@ namespace TrickyBookStore.Services.PurchaseTransactions
                 if(transaction.CustomerId == customerId && transaction.CreatedDate>=fromDate && transaction.CreatedDate <= toDate)
                 {
                     purchaseTransactions.Add(transaction);
-                    
                 }
             }
             return purchaseTransactions;
@@ -38,7 +38,7 @@ namespace TrickyBookStore.Services.PurchaseTransactions
             {
                 books.Add(BookService.GetBook(transaction.BookId));
             }
-            return books;
+            return books.OrderByDescending(b => b.Price).ToList();
         }
 
         public IList<Book> GetCustomerOldBooks(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
@@ -48,7 +48,7 @@ namespace TrickyBookStore.Services.PurchaseTransactions
 
         public IList<Book> GetCustomerNewBooks(long customerId, DateTimeOffset fromDate, DateTimeOffset toDate)
         {
-            return BookService.GetOldBooks(GetCustomerBooks(customerId, fromDate, toDate));
+            return BookService.GetNewBooks(GetCustomerBooks(customerId, fromDate, toDate));
         }
     }
 }

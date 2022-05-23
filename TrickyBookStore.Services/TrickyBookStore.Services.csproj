@@ -47,6 +47,8 @@
     <Compile Include="Books\IBookService.cs" />
     <Compile Include="Customers\CustomerService.cs" />
     <Compile Include="Customers\ICustomerService.cs" />
+    <Compile Include="GetDate\GetDateService.cs" />
+    <Compile Include="GetDate\IGetDateService.cs" />
     <Compile Include="Payment\IPaymentService.cs" />
     <Compile Include="Payment\PaymentService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -14,23 +14,18 @@ namespace TrickyBookStore.Main
         {
             ServicesCollection services = new ServicesCollection();
 
-            //foreach (Subscription book in services.GetSubscriptions(new int[2] {1, 2}))
-            //{
-            //    Console.WriteLine(book.Id);
-            //}
-            double b0 = services.getPayment(1, new DateTimeOffset(new DateTime(2017, 1, 2)), new DateTimeOffset(new DateTime(2019, 1, 21)));
-            Console.WriteLine("============");
-            double b1 = services.getPayment(2, new DateTimeOffset(new DateTime(2017, 1, 2)), new DateTimeOffset(new DateTime(2019, 1, 21)));
-            Console.WriteLine("============");
-            double b2 = services.getPayment(3, new DateTimeOffset(new DateTime(2017, 1, 2)), new DateTimeOffset(new DateTime(2019, 1, 21)));
-            Console.WriteLine("============");
-            double b3 = services.getPayment(4, new DateTimeOffset(new DateTime(2017, 1, 2)), new DateTimeOffset(new DateTime(2019, 1, 21)));
-            Console.WriteLine("============");
-            double b4 = services.getPayment(5, new DateTimeOffset(new DateTime(2017, 1, 2)), new DateTimeOffset(new DateTime(2019, 1, 21)));
-            Console.WriteLine("============");
-            double b5 = services.getPayment(6, new DateTimeOffset(new DateTime(2017, 1, 2)), new DateTimeOffset(new DateTime(2019, 1, 21)));
-            Console.WriteLine("============");
-            double b6 = services.getPayment(7, new DateTimeOffset(new DateTime(2017, 1, 2)), new DateTimeOffset(new DateTime(2019, 1, 21)));
+            Console.WriteLine("Enter customerId:");
+            int customerId = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Enter year:");
+            int year = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Enter month:");
+            int month = Convert.ToInt32(Console.ReadLine());
+
+            DateTimeOffset startDate = services.getStartDate(year, month);
+            DateTimeOffset endDate = services.getEndDate(year, month);
+
+            double total = services.getPayment(customerId, startDate, endDate);
+            Console.WriteLine("=> Total: " + total);
         }
     }
 }
